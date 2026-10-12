@@ -1,0 +1,11 @@
+F:\AgriTrade_n8n_v3_PDF_Integrated\backend\AgriTrade.Infrastructure\bin\Debug\net8.0\AgriTrade.Infrastructure.deps.json
+F:\AgriTrade_n8n_v3_PDF_Integrated\backend\AgriTrade.Infrastructure\bin\Debug\net8.0\AgriTrade.Infrastructure.dll
+F:\AgriTrade_n8n_v3_PDF_Integrated\backend\AgriTrade.Infrastructure\bin\Debug\net8.0\AgriTrade.Infrastructure.pdb
+F:\AgriTrade_n8n_v3_PDF_Integrated\backend\AgriTrade.Infrastructure\obj\Debug\net8.0\AgriTrade.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+F:\AgriTrade_n8n_v3_PDF_Integrated\backend\AgriTrade.Infrastructure\obj\Debug\net8.0\AgriTrade.Infrastructure.AssemblyInfoInputs.cache
+F:\AgriTrade_n8n_v3_PDF_Integrated\backend\AgriTrade.Infrastructure\obj\Debug\net8.0\AgriTrade.Infrastructure.AssemblyInfo.cs
+F:\AgriTrade_n8n_v3_PDF_Integrated\backend\AgriTrade.Infrastructure\obj\Debug\net8.0\AgriTrade.Infrastructure.csproj.CoreCompileInputs.cache
+F:\AgriTrade_n8n_v3_PDF_Integrated\backend\AgriTrade.Infrastructure\obj\Debug\net8.0\AgriTrade.Infrastructure.dll
+F:\AgriTrade_n8n_v3_PDF_Integrated\backend\AgriTrade.Infrastructure\obj\Debug\net8.0\refint\AgriTrade.Infrastructure.dll
+F:\AgriTrade_n8n_v3_PDF_Integrated\backend\AgriTrade.Infrastructure\obj\Debug\net8.0\AgriTrade.Infrastructure.pdb
+F:\AgriTrade_n8n_v3_PDF_Integrated\backend\AgriTrade.Infrastructure\obj\Debug\net8.0\ref\AgriTrade.Infrastructure.dll

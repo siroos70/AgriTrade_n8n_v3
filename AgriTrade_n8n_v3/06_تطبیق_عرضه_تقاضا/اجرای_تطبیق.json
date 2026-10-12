@@ -1,0 +1,92 @@
+{
+  "name": "تطبیق عرضه و تقاضا",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "اجرای-تطبیق",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "1",
+      "name": "اجرای تطبیق عرضه و تقاضا",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "اجرای-تطبیق"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH candidates AS (\nSELECT o.id offer_id,d.id demand_id,\n( CASE WHEN o.product=d.product THEN 40 ELSE 0 END\n+ CASE WHEN o.quantity_kg>=d.quantity_kg THEN 20 ELSE 10 END\n+ CASE WHEN d.max_unit_price IS NULL OR o.unit_price IS NULL OR o.unit_price<=d.max_unit_price THEN 20 ELSE 0 END\n+ CASE WHEN d.needed_date IS NULL OR o.ready_date IS NULL OR o.ready_date<=d.needed_date THEN 10 ELSE 0 END\n+ CASE WHEN d.min_quality IS NULL OR o.quality=d.min_quality THEN 10 ELSE 0 END\n) score\nFROM offers o JOIN demands d ON o.product=d.product\nWHERE o.status='فعال' AND d.status='فعال'\n)\nINSERT INTO matches(offer_id,demand_id,score,reasons)\nSELECT offer_id,demand_id,score,jsonb_build_object('روش','تطبیق اولیه بر اساس محصول، مقدار، قیمت، زمان و کیفیت')\nFROM candidates WHERE score>=70\nON CONFLICT DO NOTHING\nRETURNING *;",
+        "options": {}
+      },
+      "id": "2",
+      "name": "پیدا کردن تطبیق‌های مناسب",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        650,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+          "name": "اتصال PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "3",
+      "name": "گزارش تطبیق",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        950,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "اجرای تطبیق عرضه و تقاضا": {
+      "main": [
+        [
+          {
+            "node": "پیدا کردن تطبیق‌های مناسب",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "پیدا کردن تطبیق‌های مناسب": {
+      "main": [
+        [
+          {
+            "node": "گزارش تطبیق",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": null,
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

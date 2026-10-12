@@ -1,0 +1,82 @@
+{
+  "name": "پیگیری‌های سررسید شده",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "فروش-پیگیری-سررسید",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "1",
+      "name": "دریافت درخواست",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "فروش-پیگیری-سررسید"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT f.*, l.name AS lead_name,l.phone,l.product_interest,l.stage,l.priority,l.owner FROM sales_followups f JOIN sales_leads l ON l.id=f.lead_id WHERE f.status='برنامه‌ریزی‌شده' AND f.due_at <= now() ORDER BY f.due_at ASC;",
+        "options": {}
+      },
+      "id": "2",
+      "name": "اجرای PostgreSQL",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        260,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "3",
+      "name": "پاسخ فارسی",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        520,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "دریافت درخواست": {
+      "main": [
+        [
+          {
+            "node": "اجرای PostgreSQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "اجرای PostgreSQL": {
+      "main": [
+        [
+          {
+            "node": "پاسخ فارسی",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "tags": [
+    "AgriTrade",
+    "فروش حرفه‌ای"
+  ]
+}

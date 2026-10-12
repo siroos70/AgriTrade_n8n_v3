@@ -1,0 +1,95 @@
+{
+  "name": "ربات فارسی مدیریت معاملات",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "1",
+      "name": "دریافت پیام تلگرام",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_TELEGRAM_CREDENTIAL_ID",
+          "name": "ربات تلگرام کسب‌وکار"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const m=$json.message?.text||'';let reply='منوی سامانه معاملات انجیر و انار\\n\\n';reply+='۱. ثبت فروشنده\\n۲. ثبت خریدار\\n۳. ثبت عرضه\\n۴. ثبت تقاضا\\n۵. اجرای تطبیق\\n۶. گزارش امروز';if(m==='۱'||m==='1')reply='برای ثبت فروشنده، نام، شماره تماس و منطقه را ارسال کنید.';else if(m==='۲'||m==='2')reply='برای ثبت خریدار، نام، شماره تماس و منطقه را ارسال کنید.';else if(m==='۵'||m==='5')reply='تطبیق در حال آماده‌سازی است. از Workflow تطبیق استفاده کنید.';return [{json:{chat_id:$json.message?.chat?.id,text:reply}}];"
+      },
+      "id": "2",
+      "name": "منوی فارسی",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        250,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.chat_id}}",
+        "text": "={{$json.text}}",
+        "additionalFields": {}
+      },
+      "id": "3",
+      "name": "ارسال پاسخ فارسی",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        550,
+        0
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_TELEGRAM_CREDENTIAL_ID",
+          "name": "ربات تلگرام کسب‌وکار"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "دریافت پیام تلگرام": {
+      "main": [
+        [
+          {
+            "node": "منوی فارسی",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "منوی فارسی": {
+      "main": [
+        [
+          {
+            "node": "ارسال پاسخ فارسی",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": null,
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

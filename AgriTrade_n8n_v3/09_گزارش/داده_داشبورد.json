@@ -1,0 +1,87 @@
+{
+  "name": "داده‌های داشبورد فارسی",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "گزارش-داشبورد",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "1",
+      "name": "دریافت درخواست داشبورد",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "گزارش-داشبورد"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT (SELECT count(*) FROM sellers WHERE status='فعال') فروشندگان_فعال,(SELECT count(*) FROM buyers WHERE status='فعال') خریداران_فعال,(SELECT count(*) FROM offers WHERE status='فعال') عرضه_فعال,(SELECT count(*) FROM demands WHERE status='فعال') تقاضای_فعال,(SELECT count(*) FROM deals WHERE status NOT IN ('تسویه‌شده','لغوشده')) معاملات_جاری,(SELECT COALESCE(sum(total_value),0) FROM deals WHERE created_at::date=current_date) ارزش_امروز,(SELECT COALESCE(sum(amount),0) FROM commissions WHERE created_at::date=current_date) کمیسیون_امروز;",
+        "options": {}
+      },
+      "id": "2",
+      "name": "خواندن آمار داشبورد",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        300,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+          "name": "اتصال PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "3",
+      "name": "ارسال آمار فارسی",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        600,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "دریافت درخواست داشبورد": {
+      "main": [
+        [
+          {
+            "node": "خواندن آمار داشبورد",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "خواندن آمار داشبورد": {
+      "main": [
+        [
+          {
+            "node": "ارسال آمار فارسی",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}

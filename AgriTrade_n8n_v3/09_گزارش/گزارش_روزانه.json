@@ -1,0 +1,92 @@
+{
+  "name": "گزارش روزانه کسب‌وکار",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "گزارش-روزانه",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "1",
+      "name": "درخواست گزارش روزانه",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "گزارش-روزانه"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n(SELECT count(*) FROM sellers WHERE status='فعال') AS فروشندگان_فعال,\n(SELECT count(*) FROM buyers WHERE status='فعال') AS خریداران_فعال,\n(SELECT count(*) FROM offers WHERE status='فعال') AS عرضه_فعال,\n(SELECT count(*) FROM demands WHERE status='فعال') AS تقاضای_فعال,\n(SELECT count(*) FROM deals WHERE status NOT IN ('تسویه‌شده','لغوشده')) AS معاملات_جاری,\n(SELECT COALESCE(sum(total_value),0) FROM deals WHERE created_at::date=current_date) AS ارزش_معاملات_امروز,\n(SELECT COALESCE(sum(amount),0) FROM commissions WHERE created_at::date=current_date) AS کمیسیون_ثبت_شده_امروز;",
+        "options": {}
+      },
+      "id": "2",
+      "name": "تهیه گزارش کسب‌وکار",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        650,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+          "name": "اتصال PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "3",
+      "name": "نمایش گزارش فارسی",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        950,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "درخواست گزارش روزانه": {
+      "main": [
+        [
+          {
+            "node": "تهیه گزارش کسب‌وکار",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "تهیه گزارش کسب‌وکار": {
+      "main": [
+        [
+          {
+            "node": "نمایش گزارش فارسی",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": null,
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

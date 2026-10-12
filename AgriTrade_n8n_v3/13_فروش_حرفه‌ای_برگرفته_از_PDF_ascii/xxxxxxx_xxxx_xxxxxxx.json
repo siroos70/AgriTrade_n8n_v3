@@ -1,0 +1,82 @@
+{
+  "name": "داشبورد فروش حرفه‌ای",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "فروش-داشبورد-حرفه‌ای",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "1",
+      "name": "دریافت درخواست",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "فروش-داشبورد-حرفه‌ای"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT (SELECT count(*) FROM sales_leads WHERE status='فعال') AS سرنخ_فعال,(SELECT count(*) FROM sales_leads WHERE status='فعال' AND next_followup_at <= now()) AS پیگیری_معوق,(SELECT count(*) FROM sales_leads WHERE stage='مشتری') AS مشتری_تبدیل_شده,(SELECT COALESCE(sum(total_value),0) FROM deals WHERE created_at::date=current_date) AS ارزش_معاملات_امروز,(SELECT COALESCE(sum(amount),0) FROM commissions WHERE created_at::date=current_date) AS کمیسیون_امروز,(SELECT count(*) FROM sales_actions WHERE status NOT IN ('انجام‌شده','لغوشده') AND due_date < current_date) AS اقدام_معوق;",
+        "options": {}
+      },
+      "id": "2",
+      "name": "اجرای PostgreSQL",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        260,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "3",
+      "name": "پاسخ فارسی",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        520,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "دریافت درخواست": {
+      "main": [
+        [
+          {
+            "node": "اجرای PostgreSQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "اجرای PostgreSQL": {
+      "main": [
+        [
+          {
+            "node": "پاسخ فارسی",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "tags": [
+    "AgriTrade",
+    "فروش حرفه‌ای"
+  ]
+}

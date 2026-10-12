@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "name": "AgriTrade_n8n_v3_PDF_Integrated",
+  "sourceCode": "parent",
+  "sessionId": "500cd817-920d-43d6-a026-d6db0caff7da",
+  "runCounts": {},
+  "phases": {
+    "discovery": {
+      "status": "not-started",
+      "volumetrics": {
+        "path": ""
+      },
+      "schemaInventory": {
+        "path": ""
+      },
+      "accessPatterns": {
+        "path": ""
+      }
+    }
+  },
+  "consentGiven": true
+}

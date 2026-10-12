@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>سامانه واسطه‌گری انجیر و انار</title>
+<style>
+:root{--bg:#f4f7f6;--card:#fff;--text:#17211d;--muted:#66736d;--line:#dfe7e3;--primary:#1d6b4f;--primary2:#15543e;--danger:#a63d40;--shadow:0 8px 24px #153b2b12}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Tahoma,Arial,sans-serif;color:var(--text)}
+header{background:linear-gradient(135deg,var(--primary2),var(--primary));color:#fff;padding:22px 28px;box-shadow:var(--shadow)}
+header h1{margin:0 0 6px;font-size:22px}header p{margin:0;opacity:.88;font-size:13px}
+.layout{display:flex;min-height:calc(100vh - 92px)}
+aside{width:245px;background:#fff;border-left:1px solid var(--line);padding:18px;position:sticky;top:0;height:calc(100vh - 92px)}
+nav button{width:100%;border:0;background:transparent;text-align:right;padding:13px 14px;border-radius:10px;margin-bottom:5px;cursor:pointer;font-size:14px;color:var(--text)}
+nav button.active,nav button:hover{background:#e8f3ee;color:var(--primary2);font-weight:bold}
+main{flex:1;padding:24px;max-width:1400px}
+.view{display:none}.view.active{display:block}
+.toolbar{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+h2{margin:0;font-size:21px}.actions{display:flex;gap:8px;flex-wrap:wrap}
+button.primary,.btn{border:0;border-radius:9px;padding:10px 15px;cursor:pointer;background:var(--primary);color:#fff}
+button.secondary{background:#fff;color:var(--primary2);border:1px solid #bcd3c8;border-radius:9px;padding:9px 14px;cursor:pointer}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+.card small{color:var(--muted)}.number{font-size:27px;font-weight:bold;margin-top:8px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:720px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:right;font-size:13px}th{background:#f6f9f7;color:#415049}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#e9f5ef;color:#176344;font-size:11px}
+.empty{padding:35px;text-align:center;color:var(--muted)}
+.modal{position:fixed;inset:0;background:#0007;display:none;align-items:center;justify-content:center;padding:20px}.modal.open{display:flex}
+.modalbox{background:#fff;border-radius:15px;width:min(680px,100%);padding:22px;max-height:90vh;overflow:auto}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}
+label{font-size:12px;color:var(--muted)}input,select,textarea{padding:10px;border:1px solid #cfdad5;border-radius:8px;font-family:inherit}textarea{min-height:80px}
+.modal-actions{display:flex;justify-content:flex-start;gap:8px;margin-top:18px}
+.status{margin:10px 0;font-size:12px;color:var(--muted)}
+@media(max-width:800px){aside{width:190px}.grid{grid-template-columns:1fr}}
+@media(max-width:620px){.layout{display:block}aside{width:auto;height:auto;position:static;border-left:0;border-bottom:1px solid var(--line)}nav{display:grid;grid-template-columns:repeat(2,1fr);gap:4px}main{padding:14px}}
+</style>
+</head>
+<body>
+<header>
+<h1>سامانه واسطه‌گری خرید و فروش انجیر و انار</h1>
+<p>پنل مدیریت فارسی — نسخه ۱</p>
+</header>
+<div class="layout">
+<aside><nav id="nav"></nav></aside>
+<main>
+<section id="dashboard" class="view active">
+<div class="toolbar"><h2>داشبورد</h2><div class="actions"><button class="secondary" onclick="refreshAll()">به‌روزرسانی</button></div></div>
+<div class="cards" id="cards"></div>
+<div class="panel"><div class="empty">برای اتصال به n8n، نشانی Webhookها را در بخش «تنظیمات اتصال» وارد کنید.</div></div>
+</section>
+<section id="sellers" class="view"><div class="toolbar"><h2>فروشندگان</h2><button class="primary" onclick="openForm('seller')">+ ثبت فروشنده</button></div><div class="panel" id="sellersTable"></div></section>
+<section id="buyers" class="view"><div class="toolbar"><h2>خریداران</h2><button class="primary" onclick="openForm('buyer')">+ ثبت خریدار</button></div><div class="panel" id="buyersTable"></div></section>
+<section id="offers" class="view"><div class="toolbar"><h2>عرضه‌ها</h2><button class="primary" onclick="openForm('offer')">+ ثبت عرضه</button></div><div class="panel" id="offersTable"></div></section>
+<section id="demands" class="view"><div class="toolbar"><h2>تقاضاها</h2><button class="primary" onclick="openForm('demand')">+ ثبت تقاضا</button></div><div class="panel" id="demandsTable"></div></section>
+<section id="deals" class="view"><div class="toolbar"><h2>معاملات</h2><button class="primary" onclick="openForm('deal')">+ ثبت معامله</button></div><div class="panel" id="dealsTable"></div></section>
+<section id="commissions" class="view"><div class="toolbar"><h2>کمیسیون‌ها</h2><button class="primary" onclick="openForm('commission')">+ ثبت کمیسیون</button></div><div class="panel" id="commissionsTable"></div></section>
+<section id="settings" class="view">
+<div class="toolbar"><h2>تنظیمات اتصال</h2><button class="primary" onclick="saveSettings()">ذخیره تنظیمات</button></div>
+<div class="card"><div class="grid">
+<div class="field full"><label>نشانی پایه Webhookهای n8n</label><input id="baseUrl" placeholder="https://example.com/webhook"></div>
+<div class="field"><label>Webhook ثبت فروشنده</label><input id="sellerUrl" placeholder="ثبت-فروشنده"></div>
+<div class="field"><label>Webhook ثبت خریدار</label><input id="buyerUrl" placeholder="ثبت-خریدار"></div>
+<div class="field"><label>Webhook ثبت عرضه</label><input id="offerUrl" placeholder="ثبت-عرضه"></div>
+<div class="field"><label>Webhook ثبت تقاضا</label><input id="demandUrl" placeholder="ثبت-تقاضا"></div>
+<div class="field"><label>Webhook ثبت معامله</label><input id="dealUrl" placeholder="ثبت-معامله"></div>
+<div class="field"><label>Webhook ثبت کمیسیون</label><input id="commissionUrl" placeholder="ثبت-کمیسیون"></div>
+</div><div class="status" id="settingStatus"></div></div>
+</section>
+</main></div>
+
+<div class="modal" id="modal"><div class="modalbox"><h2 id="modalTitle"></h2><form id="form"><div class="grid" id="fields"></div><div class="modal-actions"><button class="primary">ثبت</button><button type="button" class="secondary" onclick="closeForm()">انصراف</button></div><div class="status" id="formStatus"></div></form></div></div>
+
+<script>
+const menu=[
+['dashboard','داشبورد'],['sellers','فروشندگان'],['buyers','خریداران'],['offers','عرضه‌ها'],
+['demands','تقاضاها'],['deals','معاملات'],['commissions','کمیسیون‌ها'],['settings','تنظیمات اتصال']
+];
+const demo={
+sellers:[{نام:'نمونه فروشنده',تلفن:'—',منطقه:'—',وضعیت:'فعال'}],
+buyers:[{نام:'نمونه خریدار',تلفن:'—',منطقه:'—',وضعیت:'فعال'}],
+offers:[{محصول:'انار',مقدار:'—',کیفیت:'—',وضعیت:'فعال'}],
+demands:[{محصول:'انار',مقدار:'—',کیفیت:'—',وضعیت:'فعال'}],
+deals:[{محصول:'—',مقدار:'—',ارزش:'—',وضعیت:'مذاکره'}],
+commissions:[{معامله:'—',نرخ:'—',مبلغ:'—',وضعیت:'ثبت‌شده'}]
+};
+const configs={
+seller:{title:'ثبت فروشنده',url:'sellerUrl',fields:[['name','نام و نام خانوادگی','text'],['phone','شماره تماس','tel'],['region','منطقه / شهر','text'],['notes','توضیحات','textarea']]},
+buyer:{title:'ثبت خریدار',url:'buyerUrl',fields:[['name','نام / شرکت','text'],['phone','شماره تماس','tel'],['region','منطقه / شهر','text'],['notes','توضیحات','textarea']]},
+offer:{title:'ثبت عرضه محصول',url:'offerUrl',fields:[['seller_id','شناسه فروشنده','text'],['product','محصول','select:انجیر|انار'],['variety','رقم','text'],['quantity_kg','مقدار (کیلوگرم)','number'],['quality','کیفیت','text'],['ready_date','تاریخ آماده‌سازی','date'],['unit_price','قیمت هر کیلو','number'],['packaging','نوع بسته‌بندی','text'],['location','محل محصول','text']]},
+demand:{title:'ثبت تقاضای خرید',url:'demandUrl',fields:[['buyer_id','شناسه خریدار','text'],['product','محصول','select:انجیر|انار'],['variety','رقم','text'],['quantity_kg','مقدار موردنیاز (کیلوگرم)','number'],['min_quality','حداقل کیفیت','text'],['max_unit_price','حداکثر قیمت هر کیلو','number'],['delivery_location','محل تحویل','text'],['needed_date','تاریخ موردنیاز','date']]},
+deal:{title:'ثبت معامله',url:'dealUrl',fields:[['seller_id','شناسه فروشنده','text'],['buyer_id','شناسه خریدار','text'],['product','محصول','select:انجیر|انار'],['quantity_kg','مقدار (کیلوگرم)','number'],['unit_price','قیمت هر کیلو','number'],['status','وضعیت','select:مذاکره|توافق قیمت|قرارداد|بارگیری|تحویل|تسویه‌شده|لغوشده'],['notes','توضیحات','textarea']]},
+commission:{title:'ثبت کمیسیون',url:'commissionUrl',fields:[['deal_id','شناسه معامله','text'],['total_value','ارزش معامله','number'],['rate','نرخ کمیسیون (%)','number'],['commission_type','نوع کمیسیون','select:درصدی|مبلغ ثابت'],['status','وضعیت','select:ثبت‌شده|وصول‌شده|لغوشده']]}
+};
+function init(){
+const nav=document.getElementById('nav');nav.innerHTML=menu.map(x=>`<button onclick="show('${x[0]}')">${x[1]}</button>`).join('');
+loadSettings();refreshAll();show('dashboard');
+}
+function show(id){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('nav button').forEach((b,i)=>b.classList.toggle('active',menu[i][0]===id));}
+function loadSettings(){const s=JSON.parse(localStorage.getItem('agri_n8n_settings')||'{}');Object.entries(s).forEach(([k,v])=>{const e=document.getElementById(k);if(e)e.value=v})}
+function saveSettings(){const s={};['baseUrl','sellerUrl','buyerUrl','offerUrl','demandUrl','dealUrl','commissionUrl'].forEach(k=>s[k]=document.getElementById(k).value.trim());localStorage.setItem('agri_n8n_settings',JSON.stringify(s));document.getElementById('settingStatus').textContent='تنظیمات در مرورگر ذخیره شد.'}
+function refreshAll(){
+const labels=[['فروشندگان','sellers'],['خریداران','buyers'],['عرضه‌های فعال','offers'],['تقاضاهای فعال','demands'],['معاملات جاری','deals'],['کمیسیون‌ها','commissions']];
+document.getElementById('cards').innerHTML=labels.map(x=>`<div class="card"><small>${x[0]}</small><div class="number">${demo[x[1]].length}</div></div>`).join('');
+Object.keys(demo).forEach(k=>renderTable(k,demo[k]));
+}
+function renderTable(key,rows){const el=document.getElementById(key+'Table');if(!el)return;if(!rows.length){el.innerHTML='<div class="empty">رکوردی وجود ندارد.</div>';return}
+const cols=Object.keys(rows[0]);el.innerHTML='<table><thead><tr>'+cols.map(c=>`<th>${c}</th>`).join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+cols.map(c=>`<td>${r[c]??'—'}</td>`).join('')+'</tr>').join('')+'</tbody></table>'}
+function openForm(type){const c=configs[type];document.getElementById('modalTitle').textContent=c.title;const f=document.getElementById('fields');f.innerHTML=c.fields.map(x=>{let input='';if(x[2].startsWith('select:')){const opts=x[2].slice(7).split('|');input='<select name="'+x[0]+'">'+opts.map(o=>`<option>${o}</option>`).join('')+'</select>'}else input=`<${x[2]==='textarea'?'textarea':'input'} name="${x[0]}" ${x[2]!=='textarea'?'type="'+x[2]+'"':''}></${x[2]==='textarea'?'textarea':'input'}>`;return `<div class="field ${x[2]==='textarea'?'full':''}"><label>${x[1]}</label>${input}</div>`}).join('');document.getElementById('form').dataset.type=type;document.getElementById('formStatus').textContent='';document.getElementById('modal').classList.add('open')}
+function closeForm(){document.getElementById('modal').classList.remove('open')}
+async function submitForm(e){e.preventDefault();const type=e.target.dataset.type,c=configs[type],data=Object.fromEntries(new FormData(e.target).entries());const s=JSON.parse(localStorage.getItem('agri_n8n_settings')||'{}');let url=s.baseUrl||'';const path=s[c.url]||'';if(path.startsWith('http'))url=path;else if(path)url=url.replace(/\/$/,'')+'/'+path.replace(/^\//,'');const st=document.getElementById('formStatus');if(!url){st.textContent='ابتدا نشانی Webhook را در تنظیمات اتصال وارد کنید.';return}st.textContent='در حال ارسال...';try{const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});if(!r.ok)throw new Error('HTTP '+r.status);st.textContent='ثبت با موفقیت ارسال شد.';setTimeout(closeForm,700)}catch(err){st.textContent='ارسال انجام نشد: '+err.message+' — اتصال n8n را بررسی کنید.'}}
+document.getElementById('form').addEventListener('submit',submitForm);init();
+</script>
+</body>
+</html>

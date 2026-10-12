@@ -1,0 +1,82 @@
+{
+  "name": "خواندن خواندن_طرح‌ها_و_اقدامات",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "فروش-طرح‌ها",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "1",
+      "name": "دریافت درخواست",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "فروش-طرح‌ها"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT p.*,count(a.id) AS actions_count,count(a.id) FILTER(WHERE a.status=\"انجام‌شده\") AS done_actions FROM sales_plans p LEFT JOIN sales_actions a ON a.plan_id=p.id GROUP BY p.id ORDER BY p.created_at DESC LIMIT 200;",
+        "options": {}
+      },
+      "id": "2",
+      "name": "اجرای PostgreSQL",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        260,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "3",
+      "name": "پاسخ فارسی",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        520,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "دریافت درخواست": {
+      "main": [
+        [
+          {
+            "node": "اجرای PostgreSQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "اجرای PostgreSQL": {
+      "main": [
+        [
+          {
+            "node": "پاسخ فارسی",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "tags": [
+    "AgriTrade",
+    "فروش حرفه‌ای"
+  ]
+}

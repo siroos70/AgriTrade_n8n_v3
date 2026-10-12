@@ -1,0 +1,82 @@
+{
+  "name": "خواندن خواندن_سرنخ‌ها",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "فروش-سرنخ‌ها",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "1",
+      "name": "دریافت درخواست",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "فروش-سرنخ‌ها"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id,name,phone,lead_type,product_interest,stage,priority,score,next_followup_at,owner,status,created_at FROM sales_leads ORDER BY created_at DESC LIMIT 500;",
+        "options": {}
+      },
+      "id": "2",
+      "name": "اجرای PostgreSQL",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        260,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "3",
+      "name": "پاسخ فارسی",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        520,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "دریافت درخواست": {
+      "main": [
+        [
+          {
+            "node": "اجرای PostgreSQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "اجرای PostgreSQL": {
+      "main": [
+        [
+          {
+            "node": "پاسخ فارسی",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "tags": [
+    "AgriTrade",
+    "فروش حرفه‌ای"
+  ]
+}

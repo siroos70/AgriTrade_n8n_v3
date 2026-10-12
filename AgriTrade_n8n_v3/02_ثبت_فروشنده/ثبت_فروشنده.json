@@ -1,0 +1,116 @@
+﻿{
+  "name": "ط«ط¨طھ ظپط±ظˆط´ظ†ط¯ظ‡",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ط«ط¨طھ-ظپط±ظˆط´ظ†ط¯ظ‡",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "1",
+      "name": "ط¯ط±غŒط§ظپطھ ط§ط·ظ„ط§ط¹ط§طھ ظپط±ظˆط´ظ†ط¯ظ‡",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "ط«ط¨طھ-ظپط±ظˆط´ظ†ط¯ظ‡"
+    },
+    {
+      "parameters": {
+        "jsCode": "const b=$json.body??$json;\nif(!b.name||!b.phone) throw new Error('ظ†ط§ظ… ظˆ ط´ظ…ط§ط±ظ‡ طھظ…ط§ط³ ظپط±ظˆط´ظ†ط¯ظ‡ ط§ظ„ط²ط§ظ…غŒ ط§ط³طھ');\nreturn [{json:{name:String(b.name).trim(),phone:String(b.phone).trim(),region:b.region??null,notes:b.notes??null}}];"
+      },
+      "id": "2",
+      "name": "ط§ط¹طھط¨ط§ط±ط³ظ†ط¬غŒ ظپط±ظˆط´ظ†ط¯ظ‡",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        300,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sellers(name,phone,region,notes) VALUES ('{{$json.name}}'+'{{$json.phone}}'+'{{$json.region}}'+'{{$json.notes}}') RETURNING *;",
+        "options": {}
+      },
+      "id": "3",
+      "name": "ط«ط¨طھ ظپط±ظˆط´ظ†ط¯ظ‡",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        650,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+          "name": "ط§طھطµط§ظ„ PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "4",
+      "name": "ظ¾ط§ط³ط® ظپط§ط±ط³غŒ",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        950,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "ط¯ط±غŒط§ظپطھ ط§ط·ظ„ط§ط¹ط§طھ ظپط±ظˆط´ظ†ط¯ظ‡": {
+      "main": [
+        [
+          {
+            "node": "ط§ط¹طھط¨ط§ط±ط³ظ†ط¬غŒ ظپط±ظˆط´ظ†ط¯ظ‡",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ط§ط¹طھط¨ط§ط±ط³ظ†ط¬غŒ ظپط±ظˆط´ظ†ط¯ظ‡": {
+      "main": [
+        [
+          {
+            "node": "ط«ط¨طھ ظپط±ظˆط´ظ†ط¯ظ‡",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ط«ط¨طھ ظپط±ظˆط´ظ†ط¯ظ‡": {
+      "main": [
+        [
+          {
+            "node": "ظ¾ط§ط³ط® ظپط§ط±ط³غŒ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": null,
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

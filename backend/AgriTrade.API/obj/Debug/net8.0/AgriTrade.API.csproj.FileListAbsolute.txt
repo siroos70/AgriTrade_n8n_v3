@@ -1,0 +1,7 @@
+F:\AgriTrade_n8n_v3_PDF_Integrated\backend\AgriTrade.API\obj\Debug\net8.0\AgriTrade.API.csproj.AssemblyReference.cache
+F:\AgriTrade_n8n_v3_PDF_Integrated\backend\AgriTrade.API\obj\Debug\net8.0\AgriTrade.API.GeneratedMSBuildEditorConfig.editorconfig
+F:\AgriTrade_n8n_v3_PDF_Integrated\backend\AgriTrade.API\obj\Debug\net8.0\AgriTrade.API.AssemblyInfoInputs.cache
+F:\AgriTrade_n8n_v3_PDF_Integrated\backend\AgriTrade.API\obj\Debug\net8.0\AgriTrade.API.AssemblyInfo.cs
+F:\AgriTrade_n8n_v3_PDF_Integrated\backend\AgriTrade.API\obj\Debug\net8.0\AgriTrade.API.csproj.CoreCompileInputs.cache
+F:\AgriTrade_n8n_v3_PDF_Integrated\backend\AgriTrade.API\obj\Debug\net8.0\AgriTrade.API.MvcApplicationPartsAssemblyInfo.cs
+F:\AgriTrade_n8n_v3_PDF_Integrated\backend\AgriTrade.API\obj\Debug\net8.0\AgriTrade.API.MvcApplicationPartsAssemblyInfo.cache

@@ -1,0 +1,87 @@
+{
+  "name": "خواندن عرضه‌ها برای پنل",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "پنل-خواندن-عرضه‌ها",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "1",
+      "name": "دریافت درخواست",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "پنل-خواندن-عرضه‌ها"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM v_offers ORDER BY شناسه DESC LIMIT 1000;",
+        "options": {}
+      },
+      "id": "2",
+      "name": "خواندن اطلاعات از PostgreSQL",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        300,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+          "name": "اتصال PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($input.all().map(i => i.json)) }}",
+        "options": {}
+      },
+      "id": "3",
+      "name": "ارسال اطلاعات فارسی",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        600,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "دریافت درخواست": {
+      "main": [
+        [
+          {
+            "node": "خواندن اطلاعات از PostgreSQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "خواندن اطلاعات از PostgreSQL": {
+      "main": [
+        [
+          {
+            "node": "ارسال اطلاعات فارسی",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}
